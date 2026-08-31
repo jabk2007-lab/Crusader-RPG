@@ -9,13 +9,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(FetchContent)
 
 # Download and build SDL2 automatically so the user does not need to install
-# SDL2 system-wide. We will pin the version for reproducible builds.
+# SDL2 system-wide. Pin the version for reproducible builds.
 set(SDL_TESTS OFF CACHE BOOL "" FORCE)
 set(SDL_TEST_LIBRARY OFF CACHE BOOL "" FORCE)
-set(SDL_TESTS OFF CACHE BOOL "" FORCE)
+
 FetchContent_Declare(
     SDL2
     URL https://github.com/libsdl-org/SDL/releases/download/release-2.32.10/SDL2-2.32.10.tar.gz
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 FetchContent_MakeAvailable(SDL2)
 
@@ -23,7 +24,12 @@ add_executable(CrusaderRPG
     src/main.cpp
 )
 
-target_link_libraries(CrusaderRPG PRIVATE SDL2::SDL2)
+# SDL2 uses SDL2main on Windows to provide the platform-specific application
+# entry point and then call our normal C++ main function.
+target_link_libraries(CrusaderRPG PRIVATE
+    SDL2::SDL2main
+    SDL2::SDL2
+)
 
 if (WIN32)
     target_link_libraries(CrusaderRPG PRIVATE opengl32)
