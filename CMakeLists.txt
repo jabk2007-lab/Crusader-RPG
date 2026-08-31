@@ -41,6 +41,20 @@ else()
     target_link_libraries(CrusaderRPG PRIVATE OpenGL::GL)
 endif()
 
+# When SDL2 is built as a shared library, copy its DLL beside our executable.
+# This makes the Release build directly runnable from the build/Release folder.
+if (WIN32)
+    add_custom_command(TARGET CrusaderRPG POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:SDL2::SDL2>
+            $<TARGET_FILE_DIR:CrusaderRPG>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:SDL2::SDL2main>
+            $<TARGET_FILE_DIR:CrusaderRPG>
+        COMMENT "Copying SDL2 runtime files beside CrusaderRPG.exe"
+    )
+endif()
+
 if (MSVC)
     target_compile_options(CrusaderRPG PRIVATE /W4)
 else()
