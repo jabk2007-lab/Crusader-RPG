@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(CrusaderRPG VERSION 0.1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+add_executable(CrusaderRPG
+    src/main.cpp
+)
+
+find_package(SDL2 CONFIG REQUIRED)
+
+target_link_libraries(CrusaderRPG PRIVATE SDL2::SDL2)
+
+if (WIN32)
+    target_link_libraries(CrusaderRPG PRIVATE opengl32)
+elseif(APPLE)
+    find_library(OPENGL_LIBRARY OpenGL)
+    target_link_libraries(CrusaderRPG PRIVATE ${OPENGL_LIBRARY})
+else()
+    find_package(OpenGL REQUIRED)
+    target_link_libraries(CrusaderRPG PRIVATE OpenGL::GL)
+endif()
+
+if (MSVC)
+    target_compile_options(CrusaderRPG PRIVATE /W4)
+else()
+    target_compile_options(CrusaderRPG PRIVATE -Wall -Wextra -Wpedantic)
+endif()
