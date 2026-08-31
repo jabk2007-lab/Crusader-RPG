@@ -6,11 +6,22 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+include(FetchContent)
+
+# Download and build SDL2 automatically so the user does not need to install
+# SDL2 system-wide. We will pin the version for reproducible builds.
+set(SDL_TESTS OFF CACHE BOOL "" FORCE)
+set(SDL_TEST_LIBRARY OFF CACHE BOOL "" FORCE)
+set(SDL_TESTS OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+    SDL2
+    URL https://github.com/libsdl-org/SDL/releases/download/release-2.32.10/SDL2-2.32.10.tar.gz
+)
+FetchContent_MakeAvailable(SDL2)
+
 add_executable(CrusaderRPG
     src/main.cpp
 )
-
-find_package(SDL2 CONFIG REQUIRED)
 
 target_link_libraries(CrusaderRPG PRIVATE SDL2::SDL2)
 
